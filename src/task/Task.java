@@ -17,6 +17,13 @@ public class Task { // Отдельная задача
         this.description = description;
     }
 
+    public Task(String title, String description, String status, int id) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
