@@ -72,20 +72,20 @@ public class Main {
             } else if (numberMenu == 9) {
                 taskNew1 = new Task("Создать задачу", "Просто задача", "DONE", task1.getId());
                 manager.updateTask(taskNew1); // Обновление информации обычной задачи
-            } else if (numberMenu == 10) {
+            } else if (numberMenu == 10) { // Получение всех задач
                 manager.getListTask();
                 manager.getListEpic();
                 manager.getListSubtask();
-            } else if (numberMenu == 11){
+            } else if (numberMenu == 11) { // Удаление всех задач
                 manager.deleteEpic();
                 manager.deleteTask();
                 manager.deleteSubtask();
             } else if (numberMenu == 12) {
-                manager.deleteById(1);
+                manager.deleteById(1); // Удаление по id
             } else if (numberMenu == 13) {
-                manager.getListOfTaskInEpic(epic2);
+                manager.getListOfTaskInEpic(epic2); // Получить список эпика
             } else if (numberMenu == 14) {
-                manager.deleteSubtaskFromEpic(5);
+                manager.deleteSubtaskFromEpic(5);   // Удаление эпика
             }
         }
     }
