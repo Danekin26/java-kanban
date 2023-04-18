@@ -28,10 +28,6 @@ public class Epic extends Task {
     }
 
     public void deleteIdSubtask(int id) {
-        for(int i = 0; i < idToSubtask.size(); i++) {
-            if(idToSubtask.get(i) == id) {
-                idToSubtask.remove(i);
-            }
-        }
+        if(idToSubtask.contains(id)) idToSubtask.remove(idToSubtask.indexOf(id));
     }
 }
