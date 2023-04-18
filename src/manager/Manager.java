@@ -12,7 +12,7 @@ public class Manager {
     private HashMap<Integer, Epic> idEpic = new HashMap<>();
     private HashMap<Integer, Subtask> idSubtask = new HashMap<>();
 
-    public int createTask(Task task) { // Создать задачу
+    public int createTask(Task task) { // Создание задач
         task.setId(nextId);
         nextId++;
         idTask.put(task.getId(), task);

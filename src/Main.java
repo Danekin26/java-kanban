@@ -76,7 +76,7 @@ public class Main {
                 manager.getListTask();
                 manager.getListEpic();
                 manager.getListSubtask();
-            } else if (numberMenu == 11) { // Удаление всех задач
+            } else if (numberMenu == 11) {
                 manager.deleteEpic();
                 manager.deleteTask();
                 manager.deleteSubtask();
