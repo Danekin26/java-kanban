@@ -3,6 +3,7 @@ package manager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -58,21 +59,8 @@ public class Manager {
     }
 
     public void deleteEpic() { // Удаление подзадач в эпиках
-        int counter = 0;
-        ArrayList<Integer> listIdSubtask = new ArrayList<>();
-        for(Epic epic : idEpic.values()){
-            for(Subtask sub : idSubtask.values()){
-                if(sub.getIdToEpic() == epic.getId()){
-                    counter++;
-                    listIdSubtask.add(sub.getId());
-                }
-            }
-            epic.deleteAllIdToSubtask();
-        }
-        for(int i = 0; i < counter; i++){
-            idSubtask.remove(listIdSubtask.get(i));
-        }
         idEpic.clear();
+        idSubtask.clear();
     }
 
     public Task getByid(int id) { // Получить любую задачу по id
@@ -83,14 +71,14 @@ public class Manager {
     }
 
     public void updateTask(Task task) { // Обновить таск
-            if (idTask.get(task.getId()) != null && idTask.get(task.getId()).getId() == task.getId()) {
+        if (idTask.get(task.getId()) != null && idTask.get(task.getId()).getId() == task.getId()) {
             idTask.put(task.getId(), task);
             task.setId(task.getId());
         }
     }
 
     public void updateEpic(Epic epic) { // обновить эпик
-            if(idEpic.get(epic.getId()) != null && idEpic.get(epic.getId()).getId() == epic.getId()) {
+        if (idEpic.get(epic.getId()) != null && idEpic.get(epic.getId()).getId() == epic.getId()) {
             epic.setId(epic.getId());
             assigningStatusToEpic(epic);
             idEpic.put(epic.getId(), epic);
@@ -111,19 +99,19 @@ public class Manager {
     }
 
     public void deleteById(int id) {  // удаление по id
-        if(idTask.containsKey(id)) {
+        if (idTask.containsKey(id)) {
             idTask.remove(id);
         }
-        if(idEpic.containsKey(id)) {
+        if (idEpic.containsKey(id)) {
 
-            for(int i = 0; i < idEpic.get(id).getIdToSubtask().size(); i++) {
+            for (int i = 0; i < idEpic.get(id).getIdToSubtask().size(); i++) {
                 int asd = idEpic.get(id).getIdToSubtask().get(i);
                 idSubtask.remove(idEpic.get(id).getIdToSubtask().get(i));
             }
             idEpic.get(id).deleteAllIdToSubtask();
             idEpic.remove(id);
         }
-        if(idSubtask.containsKey(id)) {
+        if (idSubtask.containsKey(id)) {
             int idToEpic = idSubtask.get(id).getIdToEpic();
             idEpic.get(idToEpic).deleteIdSubtask(id); // Тут я удаляю не весь список, а id определенной задачи
             deleteSubtaskFromEpic(id);
@@ -132,7 +120,7 @@ public class Manager {
         }
     }
 
-    public void deleteSubtaskFromEpic (int id) { // Удаление подзадачи
+    public void deleteSubtaskFromEpic(int id) { // Удаление подзадачи
         int idE = idSubtask.get(id).getIdToEpic();
         idEpic.get(idE).deleteIdSubtask(id);
         idSubtask.remove(id);
@@ -141,8 +129,8 @@ public class Manager {
     public ArrayList getListOfTaskInEpic(Epic epic) { // Получить список подзадач эпика
         ArrayList<Subtask> subtaskList = new ArrayList<>();
         Integer idEpic = epic.getId();
-        for(Subtask sub : idSubtask.values()){
-            if(idEpic.equals(sub.getIdToEpic())) {
+        for (Subtask sub : idSubtask.values()) {
+            if (idEpic.equals(sub.getIdToEpic())) {
                 subtaskList.add(sub);
             }
         }
@@ -157,9 +145,9 @@ public class Manager {
         if (epic.getIdToSubtask().size() != 0) {
             for (int i = 0; i < epic.getIdToSubtask().size(); i++) {
                 id = epic.getIdToSubtask().get(i);
-                if(idSubtask.get(id).getStatus().equals("NEW")) countNew++;
-                else if(idSubtask.get(id).getStatus().equals("DONE")) countDone++;
-                else if(idSubtask.get(id).getStatus().equals("IN_PROGRESS")) countInProgress++;
+                if (idSubtask.get(id).getStatus().equals("NEW")) countNew++;
+                else if (idSubtask.get(id).getStatus().equals("DONE")) countDone++;
+                else if (idSubtask.get(id).getStatus().equals("IN_PROGRESS")) countInProgress++;
             }
             if ((countNew == epic.getIdToSubtask().size()) && (countInProgress == 0)) epic.setStatus("NEW");
             else if ((countDone == epic.getIdToSubtask().size()) && (countInProgress == 0)) epic.setStatus("DONE");
