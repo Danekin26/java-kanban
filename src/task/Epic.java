@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Epic extends Task {
     private ArrayList<Integer> idToSubtask = new ArrayList<>();
 
-    public Epic(String title, String description, String status, int id, ArrayList<Integer> idToSubtask) {
+    public Epic(String title, String description, TasksStatus status, int id, ArrayList<Integer> idToSubtask) {
         super(title, description, status, id);
         this.idToSubtask = idToSubtask;
     }
@@ -28,6 +28,6 @@ public class Epic extends Task {
     }
 
     public void deleteIdSubtask(int id) {
-        if(idToSubtask.contains(id)) idToSubtask.remove(idToSubtask.indexOf(id));
+        if (idToSubtask.contains(id)) idToSubtask.remove(idToSubtask.indexOf(id));
     }
 }

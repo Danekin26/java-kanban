@@ -3,10 +3,10 @@ package task;
 public class Task { // Отдельная задача
     private String title;
     private String description;
-    private String status;
+    private TasksStatus status;
     private int id;
 
-    public Task(String title, String description, String status) {
+    public Task(String title, String description, TasksStatus status) {
         this.title = title;
         this.description = description;
         this.status = status;
@@ -17,7 +17,7 @@ public class Task { // Отдельная задача
         this.description = description;
     }
 
-    public Task(String title, String description, String status, int id) {
+    public Task(String title, String description, TasksStatus status, int id) {
         this.title = title;
         this.description = description;
         this.status = status;
@@ -40,11 +40,11 @@ public class Task { // Отдельная задача
         this.description = description;
     }
 
-    public String getStatus() {
+    public TasksStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TasksStatus status) {
         this.status = status;
     }
 
