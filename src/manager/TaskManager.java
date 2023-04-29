@@ -5,6 +5,7 @@ import task.Subtask;
 import task.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
     int createTask(Task task); // Создание задач
@@ -40,4 +41,6 @@ public interface TaskManager {
     void deleteById(int id); // удаление по id
 
     ArrayList getListOfTaskInEpic(Epic epic); // Получить список подзадач эпика
+
+    List<Task> getListHistory(); // Получить список истории
 }

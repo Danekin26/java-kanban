@@ -84,17 +84,24 @@ public class Main {
                 inMemoryTaskManager.deleteTask();
                 inMemoryTaskManager.deleteSubtask();
             } else if (numberMenu == 12) {
-                inMemoryTaskManager.deleteById(1); // Удаление по id
+                inMemoryTaskManager.deleteById(6); // Удаление по id
             } else if (numberMenu == 13) {
                 inMemoryTaskManager.getListOfTaskInEpic(epic2); // Получить список эпика
             } else if (numberMenu == 14) {
-                inMemoryTaskManager.getInMemoryHistoryManager().getHistory();
+                inMemoryTaskManager.getListHistory();
             } else if (numberMenu == 15) {
-                inMemoryTaskManager.getListEpic();
-                inMemoryTaskManager.getListTask();
-                inMemoryTaskManager.getListSubtask();
-                inMemoryTaskManager.getListTask();
-                inMemoryTaskManager.getListSubtask();
+                inMemoryTaskManager.getTask(7);
+                inMemoryTaskManager.getTask(8);
+                inMemoryTaskManager.getEpic(1);
+                inMemoryTaskManager.getEpic(4);
+                inMemoryTaskManager.getSubtask(2);
+                inMemoryTaskManager.getSubtask(3);
+                inMemoryTaskManager.getSubtask(5);
+                inMemoryTaskManager.getSubtask(6);
+                inMemoryTaskManager.getTask(7);
+                inMemoryTaskManager.getTask(8);
+                inMemoryTaskManager.getEpic(1);
+                inMemoryTaskManager.getEpic(4);
             } else if (numberMenu == 16) {
                 managers.getDefault().createTask(task1);
             }
