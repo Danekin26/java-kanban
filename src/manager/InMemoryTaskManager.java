@@ -5,7 +5,6 @@ import task.Subtask;
 import task.Task;
 import task.TasksStatus;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +65,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubtask() { // Удаление списка подзадач
         idSubtask.clear();
         for (Epic epic : idEpic.values()) {
+            epic.deleteAllIdToSubtask();
             assigningStatusToEpic(epic);
         }
     }
