@@ -104,6 +104,44 @@ public class Main {
                 inMemoryTaskManager.getEpic(4);
             } else if (numberMenu == 16) {
                 managers.getDefault().createTask(task1);
+            } else if (numberMenu == 17) {
+                Epic epic1New = new Epic("Экзамен", "Нужно сдать экзамен");
+                Subtask subtask1 = new Subtask("Расписать вопросы", "Подробное описание вопросов к экзамену",
+                        TasksStatus.DONE);
+                inMemoryTaskManager.createEpic(epic1New); // id 1
+                inMemoryTaskManager.createSubtask(subtask1); // id 2
+                epic1New.setIdToSubtask(subtask1.getId());
+                subtask1.setIdToEpic(epic1New.getId());
+                Subtask subtask2 = new Subtask("Выучить вопросы", "Выучить вопросы",
+                        TasksStatus.NEW);
+                inMemoryTaskManager.createSubtask(subtask2); // id 3
+                epic1New.setIdToSubtask(subtask2.getId());
+                subtask2.setIdToEpic(epic1New.getId());
+                Subtask subtask3 = new Subtask("Сдать экзамен", "Сдать экзамен",
+                        TasksStatus.NEW);
+                inMemoryTaskManager.createSubtask(subtask3); // id 4
+                epic1New.setIdToSubtask(subtask3.getId());
+                subtask3.setIdToEpic(epic1New.getId());
+
+                Epic epic2New = new Epic("Получить диплом", "Нужно получить диплом");
+                inMemoryTaskManager.createEpic(epic2New); // id 5
+
+                inMemoryTaskManager.getEpic(1);
+                inMemoryTaskManager.getSubtask(2);
+                inMemoryTaskManager.getSubtask(3);
+                inMemoryTaskManager.getSubtask(4);
+                inMemoryTaskManager.getEpic(5);
+                inMemoryTaskManager.getSubtask(2);
+                inMemoryTaskManager.getSubtask(4);
+
+                inMemoryTaskManager.getListHistory();
+
+                inMemoryTaskManager.deleteById(1);// удаление эпика с подзадачами
+
+                inMemoryTaskManager.getListHistory();
+
+                inMemoryTaskManager.deleteSubtask();
+                inMemoryTaskManager.getListHistory();
             }
         }
     }

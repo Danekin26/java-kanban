@@ -58,20 +58,32 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTask() { // Удаление списка задач
+        for (Task task : idTask.values()){
+            inMemoryHistoryManager.remove(task.getId()); // Удаление из истории
+        }
         idTask.clear();
     }
 
     @Override
     public void deleteSubtask() { // Удаление списка подзадач
-        idSubtask.clear();
-        for (Epic epic : idEpic.values()) {
+        for (Epic epic : idEpic.values()) { // Удаление из истории
+            for(int i = 0; i< epic.getIdToSubtask().size(); i++) {
+                inMemoryHistoryManager.remove(epic.getIdToSubtask().get(i));
+            }
             epic.deleteAllIdToSubtask();
             assigningStatusToEpic(epic);
         }
+        idSubtask.clear();
     }
 
     @Override
     public void deleteEpic() { // Удаление эпиков и их подзадач
+        for (Epic epic : idEpic.values()) { // Удаление из истории
+            inMemoryHistoryManager.remove(epic.getId());
+        }
+        for (Subtask sub : idSubtask.values()){
+            inMemoryHistoryManager.remove(sub.getId());
+        }
         idEpic.clear();
         idSubtask.clear();
     }
@@ -141,16 +153,20 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteById(int id) {  // удаление по id
         if (idTask.containsKey(id)) {
+            inMemoryHistoryManager.remove(idTask.get(id).getId()); // удаление из истории
             idTask.remove(id);
         }
         if (idEpic.containsKey(id)) {
+            inMemoryHistoryManager.remove(idEpic.get(id).getId()); // Удаление из истории
             for (int i = 0; i < idEpic.get(id).getIdToSubtask().size(); i++) {
                 idSubtask.remove(idEpic.get(id).getIdToSubtask().get(i));
+                inMemoryHistoryManager.remove(idEpic.get(id).getIdToSubtask().get(i)); // Удаление из истории
             }
             idEpic.get(id).deleteAllIdToSubtask();
             idEpic.remove(id);
         }
         if (idSubtask.containsKey(id)) {
+            inMemoryHistoryManager.remove(idSubtask.get(id).getId()); // Удаление из истории
             int idToEpic = idSubtask.get(id).getIdToEpic();
             Epic epic = idEpic.get(idToEpic);
             deleteSubtaskFromEpic(id);
@@ -170,6 +186,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getListHistory() {
+        System.out.println(inMemoryHistoryManager.getHistory());
         return inMemoryHistoryManager.getHistory();
     }
 
