@@ -186,7 +186,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getListHistory() {
-        System.out.println(inMemoryHistoryManager.getHistory());
+        System.out.println(inMemoryHistoryManager.getHistory()); // Печать для проверки
         return inMemoryHistoryManager.getHistory();
     }
 
