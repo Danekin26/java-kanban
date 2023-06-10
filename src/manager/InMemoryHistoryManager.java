@@ -45,7 +45,6 @@ class CustomLinkedList<T> {
             oldTail.next = newNode;
         }
         size++;
-        //listNodes.add(newNode);
         return newNode;
     }
 

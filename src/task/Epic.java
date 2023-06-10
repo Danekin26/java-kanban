@@ -10,6 +10,10 @@ public class Epic extends Task {
         this.idToSubtask = idToSubtask;
     }
 
+    public Epic(Task task) {
+        super(task.getTitle(), task.getDescription(), task.getStatus(), task.getId());
+    }
+
 
     public ArrayList<Integer> getIdToSubtask() {
         return idToSubtask;
@@ -29,5 +33,10 @@ public class Epic extends Task {
 
     public void deleteIdSubtask(int id) {
         if (idToSubtask.contains(id)) idToSubtask.remove(idToSubtask.indexOf(id));
+    }
+
+    @Override
+    public Integer getIdToEpic() {
+        return null;
     }
 }

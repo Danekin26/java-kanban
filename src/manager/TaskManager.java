@@ -4,15 +4,16 @@ import task.Epic;
 import task.Subtask;
 import task.Task;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
-    int createTask(Task task); // Создание задач
+    int createTask(Task task) throws IOException; // Создание задач
 
-    int createSubtask(Subtask subtask); // Создание подзадачи
+    int createSubtask(Subtask subtask) throws IOException; // Создание подзадачи
 
-    int createEpic(Epic epic); // Создание эпика
+    int createEpic(Epic epic) throws IOException; // Создание эпика
 
     ArrayList<Task> getListTask(); // Получить список задач
 
@@ -20,11 +21,11 @@ public interface TaskManager {
 
     ArrayList<Subtask> getListSubtask(); // Получить список подзадач
 
-    void deleteTask(); // Удаление списка задач
+    void deleteTask() throws IOException; // Удаление списка задач
 
-    void deleteSubtask(); // Удаление списка подзадач
+    void deleteSubtask() throws IOException; // Удаление списка подзадач
 
-    void deleteEpic(); // Удаление эпиков и их подзадач
+    void deleteEpic() throws IOException; // Удаление эпиков и их подзадач
 
     Task getTask(int id);  // Получить задачу по id
 
@@ -32,15 +33,17 @@ public interface TaskManager {
 
     Subtask getSubtask(int id);  // Получить подзадачу по id
 
-    void updateTask(Task task); // Обновить таск
+    void updateTask(Task task) throws IOException; // Обновить таск
 
-    void updateEpic(Epic epic); // обновить эпик
+    void updateEpic(Epic epic) throws IOException; // обновить эпик
 
-    void updateSubtask(Subtask subtask); // обновить сабтаск
+    void updateSubtask(Subtask subtask) throws IOException; // обновить сабтаск
 
-    void deleteById(int id); // удаление по id
+    void deleteById(int id) throws IOException; // удаление по id
 
     ArrayList getListOfTaskInEpic(Epic epic); // Получить список подзадач эпика
 
     List<Task> getListHistory(); // Получить список истории
+
+    Task getAnyTask(Integer id); // Получить любую задачу (добавил для того, что бы не засорять историю при вызове методов получения задач по id)
 }

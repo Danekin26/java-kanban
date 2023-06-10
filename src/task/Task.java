@@ -5,6 +5,9 @@ public class Task { // Отдельная задача
     private String description;
     private TasksStatus status;
     private int id;
+    private TaskType type;
+    private Integer idToEpic; // принял решение перенести из подзадачи это поле в класс-родитель, в эпиках и задачах записывать здесь null
+
 
     public Task(String title, String description, TasksStatus status) {
         this.title = title;
@@ -28,16 +31,8 @@ public class Task { // Отдельная задача
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public TasksStatus getStatus() {
@@ -54,5 +49,21 @@ public class Task { // Отдельная задача
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Integer getIdToEpic() {
+        return idToEpic;
+    }
+
+    public TaskType getType() {
+        return type;
+    }
+
+    public void setType(TaskType type) {
+        this.type = type;
+    }
+
+    public void setIdToEpic(int id) {
+        this.idToEpic = id;
     }
 }

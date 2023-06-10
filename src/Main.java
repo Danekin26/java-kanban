@@ -1,14 +1,18 @@
+import manager.FileBackedTasksManager;
 import manager.InMemoryTaskManager;
 import manager.Managers;
-import task.Epic;
-import task.Subtask;
-import task.Task;
-import task.TasksStatus;
+import task.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
+import static manager.FileBackedTasksManager.loadFromFile;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
         int numberMenu;
@@ -17,22 +21,29 @@ public class Main {
         Subtask subtaskNew22;
         Managers managers = new Managers();
         Task task1 = new Task("Создать задачу", "Просто задача", TasksStatus.IN_PROGRESS);
+        task1.setType(TaskType.TASK);
         Task task2 = new Task("Создать вторую задачу", "Просто задача", TasksStatus.DONE);
+        task2.setType(TaskType.TASK);
 
         Epic epic1 = new Epic("Экзамен", "Нужно сдать экзамен");
         Subtask subtask11 = new Subtask("Расписать вопросы", "Подробное описание вопросов к экзамену",
                 TasksStatus.DONE);
+        epic1.setType(TaskType.EPIC);
+        subtask11.setType(TaskType.SUBTASK);
+
 
         Subtask subtask12 = new Subtask("Созвониться с одногруппниками",
                 "Написать в группу и узнать удобное для всех время", TasksStatus.NEW);
-
+        subtask12.setType(TaskType.SUBTASK);
 
         Epic epic2 = new Epic("Покупка компьютера", "Компьютер нужен для работы и игр");
         Subtask subtask21 = new Subtask("Выбрать компонентны",
                 "Подобрать актуальные компонентны для 2023 года", TasksStatus.DONE);
+        epic2.setType(TaskType.EPIC);
 
         Subtask subtask22 = new Subtask("Мониторить цены",
                 "Цены в разных магазинах отличаются друг от друга", TasksStatus.NEW);
+        subtask22.setType(TaskType.SUBTASK);
 
 
         while (true) { // Проверка на работоспособность
@@ -40,7 +51,6 @@ public class Main {
             numberMenu = scanner.nextInt();
             if (numberMenu == 1) {
                 inMemoryTaskManager.createEpic(epic1);   // id = 1
-            } else if (numberMenu == 2) {
                 inMemoryTaskManager.createSubtask(subtask11); // id = 2
                 epic1.setIdToSubtask(subtask11.getId());
                 subtask11.setIdToEpic(epic1.getId());
@@ -48,9 +58,7 @@ public class Main {
                 epic1.setIdToSubtask(subtask12.getId());
                 subtask12.setIdToEpic(epic1.getId());
                 inMemoryTaskManager.updateEpic(epic1);
-            } else if (numberMenu == 3) {
                 inMemoryTaskManager.createEpic(epic2); // id = 4
-            } else if (numberMenu == 4) {
                 inMemoryTaskManager.createSubtask(subtask21); // id = 5
                 epic2.setIdToSubtask(subtask21.getId());
                 subtask21.setIdToEpic(epic2.getId());
@@ -58,38 +66,34 @@ public class Main {
                 epic2.setIdToSubtask(subtask22.getId());
                 subtask22.setIdToEpic(epic2.getId());
                 inMemoryTaskManager.updateEpic(epic2);
-            } else if (numberMenu == 5) {
                 inMemoryTaskManager.createTask(task1); // id = 7
                 inMemoryTaskManager.createTask(task2); // id = 8
-            } else if (numberMenu == 6) {
+            } else if (numberMenu == 2) {
                 epic12 = new Epic("Экзамен", "сдать экзамен", epic1.getStatus(), epic1.getId(),
                         epic1.getIdToSubtask());
                 inMemoryTaskManager.updateEpic(epic12);
-            } else if (numberMenu == 7) {
-                subtaskNew22 = new Subtask("Мониторить цены",
-                        "Цены в разных магазинах отличаются друг от друга", TasksStatus.DONE, subtask22.getId(),
-                        subtask22.getIdToEpic());
-                inMemoryTaskManager.updateSubtask(subtaskNew22); // Обновление подзадачи
-            } else if (numberMenu == 8) {
+            } else if (numberMenu == 3) {
+
+            } else if (numberMenu == 4) {
                 inMemoryTaskManager.getEpic(4); // Получение объекта по id
-            } else if (numberMenu == 9) {
+            } else if (numberMenu == 5) {
                 taskNew1 = new Task("Создать задачу", "Просто задача", TasksStatus.DONE, task1.getId());
                 inMemoryTaskManager.updateTask(taskNew1); // Обновление информации обычной задачи
-            } else if (numberMenu == 10) { // Получение всех задач
-                inMemoryTaskManager.getListTask();
+            } else if (numberMenu == 6) {
+                inMemoryTaskManager.getListTask(); // Получение всех задач
                 inMemoryTaskManager.getListEpic();
                 inMemoryTaskManager.getListSubtask();
-            } else if (numberMenu == 11) {
+            } else if (numberMenu == 7) {
                 inMemoryTaskManager.deleteEpic();
                 inMemoryTaskManager.deleteTask();
                 inMemoryTaskManager.deleteSubtask();
-            } else if (numberMenu == 12) {
+            } else if (numberMenu == 8) {
                 inMemoryTaskManager.deleteById(6); // Удаление по id
-            } else if (numberMenu == 13) {
+            } else if (numberMenu == 9) {
                 inMemoryTaskManager.getListOfTaskInEpic(epic2); // Получить список эпика
-            } else if (numberMenu == 14) {
+            } else if (numberMenu == 10) {
                 inMemoryTaskManager.getListHistory();
-            } else if (numberMenu == 15) {
+            } else if (numberMenu == 11) {
                 inMemoryTaskManager.getTask(7);
                 inMemoryTaskManager.getTask(8);
                 inMemoryTaskManager.getEpic(1);
@@ -102,9 +106,9 @@ public class Main {
                 inMemoryTaskManager.getTask(8);
                 inMemoryTaskManager.getEpic(1);
                 inMemoryTaskManager.getEpic(4);
-            } else if (numberMenu == 16) {
+            } else if (numberMenu == 12) {
                 managers.getDefault().createTask(task1);
-            } else if (numberMenu == 17) {
+            } else if (numberMenu == 13) {
                 Epic epic1New = new Epic("Экзамен", "Нужно сдать экзамен");
                 Subtask subtask1 = new Subtask("Расписать вопросы", "Подробное описание вопросов к экзамену",
                         TasksStatus.DONE);
@@ -142,6 +146,50 @@ public class Main {
 
                 inMemoryTaskManager.deleteSubtask();
                 inMemoryTaskManager.getListHistory();
+            } else if (numberMenu == 14) {
+                Path path = Paths.get("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\history.csv");
+                FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(path);
+               // fileBackedTasksManager.createTask(task1);
+                //fileBackedTasksManager.createEpic(epic1);
+                fileBackedTasksManager.createEpic(epic1);   // id = 1
+                epic1.setType(TaskType.EPIC);
+                fileBackedTasksManager.createSubtask(subtask11); // id = 2
+                subtask11.setType(TaskType.SUBTASK);
+                epic1.setIdToSubtask(subtask11.getId());
+                subtask11.setIdToEpic(epic1.getId());
+                fileBackedTasksManager.createSubtask(subtask12); //id = 3
+                subtask12.setType(TaskType.SUBTASK);
+                epic1.setIdToSubtask(subtask12.getId());
+                subtask12.setIdToEpic(epic1.getId());
+                fileBackedTasksManager.updateEpic(epic1);
+                fileBackedTasksManager.createEpic(epic2); // id = 4
+                epic2.setType(TaskType.EPIC);
+                fileBackedTasksManager.createSubtask(subtask21); // id = 5
+                subtask21.setType(TaskType.SUBTASK);
+
+                epic2.setIdToSubtask(subtask21.getId());
+                subtask21.setIdToEpic(epic2.getId());
+                fileBackedTasksManager.createSubtask(subtask22); // id = 6
+                subtask22.setType(TaskType.SUBTASK);
+
+                epic2.setIdToSubtask(subtask22.getId());
+                subtask22.setIdToEpic(epic2.getId());
+                fileBackedTasksManager.updateEpic(epic2);
+                fileBackedTasksManager.createTask(task1); // id = 7
+                task1.setType(TaskType.TASK);
+
+                fileBackedTasksManager.createTask(task2); // id = 8
+                task2.setType(TaskType.TASK);
+
+                fileBackedTasksManager.getTask(7);
+                fileBackedTasksManager.getTask(8);
+                fileBackedTasksManager.getEpic(1);
+                fileBackedTasksManager.getSubtask(5);
+                fileBackedTasksManager.deleteById(7);
+
+            } else if (numberMenu == 15) {
+                FileBackedTasksManager fileBackedTasksManager2
+                        = loadFromFile(new File("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\history.csv"));
             }
         }
     }
