@@ -244,7 +244,7 @@ public class InMemoryTaskManager implements TaskManager {
         idSubtask.remove(id);
     }
 
-    public HistoryManager getInMemoryHistoryManager() {
+    protected HistoryManager getInMemoryHistoryManager() {
         return inMemoryHistoryManager;
     }
 }

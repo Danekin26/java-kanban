@@ -10,18 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    Path dir;
+    private Path dir;
 
     public FileBackedTasksManager(Path dir) {
         this.dir = dir;
     }
 
     public static void main(String[] args) throws IOException {
-        // загрузка из файла
-        /*FileBackedTasksManager fileBackedTasksManager2
-                = loadFromFile(new File("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\history.csv"));
-        assigningId(fileBackedTasksManager2);*/
-
         // Запись в файл
         Path path = Paths.get("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\history.csv");
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(path);
@@ -85,6 +80,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileBackedTasksManager.getEpic(1);
         fileBackedTasksManager.getSubtask(5);
         fileBackedTasksManager.deleteById(7);
+
+
+
+        // загрузка из файла
+        FileBackedTasksManager fileBackedTasksManager2
+                = loadFromFile(new File("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\history.csv"));
+        assigningId(fileBackedTasksManager2);
 
     }
 
@@ -152,29 +154,29 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-    public void save() throws IOException {
+    private void save() throws IOException {
         List<Task> allTask = new ArrayList<>(); // Список со всеми задачами
         allTask.addAll(getListTask());
         allTask.addAll(getListEpic());
         allTask.addAll(getListSubtask());
+        String tableOfContents = "id,type,name,status,description,epic\n"; // Не до конца понимаю куда нужно было вынести переменную, но выносить ее вне метода, мне кажется, не верным решением.
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dir.toFile())); // запись в файл
-        bufferedWriter.write("id,type,name,status,description,epic\n");
+        bufferedWriter.write(tableOfContents);
         for (Task task : allTask) {
-            bufferedWriter.write(toString(task));   // записываются все задачи
+            bufferedWriter.write(taskToString(task));   // записываются все задачи
         }
         try {
             bufferedWriter.write(historyToString(getInMemoryHistoryManager())); // запись истории, если она пустая, то игнорируется
         } catch (NullPointerException ignored) {
+            System.out.println("История пуста.");
         }
         bufferedWriter.close();
     }
 
-    public String toString(Task task) { // запись задач в строку
-        String asd;
+    private String taskToString(Task task) { // запись задач в строку
         String id = String.valueOf(task.getIdToEpic());
-        asd = task.getId() + "," + task.getType() + "," + task.getTitle() + "," + task.getStatus()
+        return task.getId() + "," + task.getType() + "," + task.getTitle() + "," + task.getStatus()
                 + "," + task.getDescription() + "," + id + "\n";
-        return asd;
     }
 
     public static Task fromString(String value) { // Восстановление задачи из строки
@@ -192,7 +194,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return task;
     }
 
-    static String historyToString(HistoryManager manager) {  // запись истории в строку
+   private static String historyToString(HistoryManager manager) {  // запись истории в строку
         StringBuilder build = new StringBuilder();
         build.append("\n");
         for (int i = 0; i < manager.getHistory().size(); i++) {
@@ -204,7 +206,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return build.toString();
     }
 
-    static List<Integer> historyFromString(String value) { // запись id истории в список
+    private static List<Integer> historyFromString(String value) { // запись id истории в список
         String[] split = value.split(",");
         List<Integer> idHistory = new ArrayList<>();
         for (int i = 0; i < split.length; i++) {
@@ -219,7 +221,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             datFile = Files.readString(file.toPath());
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при считывании. Файл отсутствует.");
+            throw new ManagerSaveException("Ошибка при считывании." + e.getMessage());
         }
         if (datFile.isBlank()) {
             return fileBackedTasksManager;
