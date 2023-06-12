@@ -17,10 +17,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) throws IOException {
-        // Запись в файл
-        Path path = Paths.get("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\history.csv");
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(path);
+        // загрузка из файла
+        FileBackedTasksManager fileBackedTasksManager2
+                = loadFromFile(new File("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\history.csv"));
+        assigningId(fileBackedTasksManager2);
 
+        // Запись в файл
         Epic epic1 = new Epic("Экзамен", "Нужно сдать экзамен");
         Subtask subtask11 = new Subtask("Расписать вопросы", "Подробное описание вопросов к экзамену",
                 TasksStatus.DONE);
@@ -45,49 +47,43 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Task task2 = new Task("Создать вторую задачу", "Просто задача", TasksStatus.DONE);
         task2.setType(TaskType.TASK);
 
-        fileBackedTasksManager.createEpic(epic1);   // id = 1
+        fileBackedTasksManager2.createEpic(epic1);   // id = 1
         epic1.setType(TaskType.EPIC);
-        fileBackedTasksManager.createSubtask(subtask11); // id = 2
+        fileBackedTasksManager2.createSubtask(subtask11); // id = 2
         subtask11.setType(TaskType.SUBTASK);
         epic1.setIdToSubtask(subtask11.getId());
         subtask11.setIdToEpic(epic1.getId());
-        fileBackedTasksManager.createSubtask(subtask12); //id = 3
+        fileBackedTasksManager2.createSubtask(subtask12); //id = 3
         subtask12.setType(TaskType.SUBTASK);
         epic1.setIdToSubtask(subtask12.getId());
         subtask12.setIdToEpic(epic1.getId());
-        fileBackedTasksManager.updateEpic(epic1);
-        fileBackedTasksManager.createEpic(epic2); // id = 4
+        fileBackedTasksManager2.updateEpic(epic1);
+        fileBackedTasksManager2.createEpic(epic2); // id = 4
         epic2.setType(TaskType.EPIC);
-        fileBackedTasksManager.createSubtask(subtask21); // id = 5
+        fileBackedTasksManager2.createSubtask(subtask21); // id = 5
         subtask21.setType(TaskType.SUBTASK);
 
         epic2.setIdToSubtask(subtask21.getId());
         subtask21.setIdToEpic(epic2.getId());
-        fileBackedTasksManager.createSubtask(subtask22); // id = 6
+        fileBackedTasksManager2.createSubtask(subtask22); // id = 6
         subtask22.setType(TaskType.SUBTASK);
 
         epic2.setIdToSubtask(subtask22.getId());
         subtask22.setIdToEpic(epic2.getId());
-        fileBackedTasksManager.updateEpic(epic2);
-        fileBackedTasksManager.createTask(task1); // id = 7
+        fileBackedTasksManager2.updateEpic(epic2);
+        fileBackedTasksManager2.createTask(task1); // id = 7
         task1.setType(TaskType.TASK);
 
-        fileBackedTasksManager.createTask(task2); // id = 8
+        fileBackedTasksManager2.createTask(task2); // id = 8
         task2.setType(TaskType.TASK);
 
-        fileBackedTasksManager.getTask(7);
-        fileBackedTasksManager.getTask(8);
-        fileBackedTasksManager.getEpic(1);
-        fileBackedTasksManager.getSubtask(5);
-        fileBackedTasksManager.deleteById(7);
+        fileBackedTasksManager2.getTask(7);
+        fileBackedTasksManager2.getSubtask(5);
+        fileBackedTasksManager2.getEpic(1);
+        fileBackedTasksManager2.getTask(8);
+        fileBackedTasksManager2.getSubtask(3);
 
-
-
-        // загрузка из файла
-        FileBackedTasksManager fileBackedTasksManager2
-                = loadFromFile(new File("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\history.csv"));
-        assigningId(fileBackedTasksManager2);
-
+        fileBackedTasksManager2.deleteById(7);
     }
 
     @Override
@@ -154,31 +150,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-    private void save() throws IOException {
-        List<Task> allTask = new ArrayList<>(); // Список со всеми задачами
-        allTask.addAll(getListTask());
-        allTask.addAll(getListEpic());
-        allTask.addAll(getListSubtask());
-        String tableOfContents = "id,type,name,status,description,epic\n"; // Не до конца понимаю куда нужно было вынести переменную, но выносить ее вне метода, мне кажется, не верным решением.
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dir.toFile())); // запись в файл
-        bufferedWriter.write(tableOfContents);
-        for (Task task : allTask) {
-            bufferedWriter.write(taskToString(task));   // записываются все задачи
-        }
-        try {
-            bufferedWriter.write(historyToString(getInMemoryHistoryManager())); // запись истории, если она пустая, то игнорируется
-        } catch (NullPointerException ignored) {
-            System.out.println("История пуста.");
-        }
-        bufferedWriter.close();
-    }
-
-    private String taskToString(Task task) { // запись задач в строку
-        String id = String.valueOf(task.getIdToEpic());
-        return task.getId() + "," + task.getType() + "," + task.getTitle() + "," + task.getStatus()
-                + "," + task.getDescription() + "," + id + "\n";
-    }
-
     public static Task fromString(String value) { // Восстановление задачи из строки
         String[] split = value.split(",");
         split[3] = split[3].toUpperCase();
@@ -194,26 +165,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return task;
     }
 
-   private static String historyToString(HistoryManager manager) {  // запись истории в строку
-        StringBuilder build = new StringBuilder();
-        build.append("\n");
-        for (int i = 0; i < manager.getHistory().size(); i++) {
-            build.append(manager.getHistory().get(i).getId());
-            if (i != manager.getHistory().size() - 1) {
-                build.append(",");
-            }
-        }
-        return build.toString();
-    }
-
-    private static List<Integer> historyFromString(String value) { // запись id истории в список
-        String[] split = value.split(",");
-        List<Integer> idHistory = new ArrayList<>();
-        for (int i = 0; i < split.length; i++) {
-            idHistory.add(Integer.parseInt(split[i]));
-        }
-        return idHistory;
-    }
 
     public static FileBackedTasksManager loadFromFile(File file) throws IOException { // восстановление всей информации из файла
         String datFile;
@@ -267,11 +218,59 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private static void repairHistory(FileBackedTasksManager file, List<Integer> historyFromString) throws IOException {
         for (Integer integer : historyFromString) {
             if (file.getListTask().contains(file.getTask(integer))) {
+                file.getTask(integer);
             } else if (file.getListEpic().contains(file.getEpic(integer))) {
+                file.getEpic(integer);
             } else {
                 file.getSubtask(integer);
             }
         }
         file.save();
+    }
+
+    private static String historyToString(HistoryManager manager) {  // запись истории в строку
+        StringBuilder build = new StringBuilder();
+        build.append("\n");
+        for (int i = 0; i < manager.getHistory().size(); i++) {
+            build.append(manager.getHistory().get(i).getId());
+            if (i != manager.getHistory().size() - 1) {
+                build.append(",");
+            }
+        }
+        return build.toString();
+    }
+
+    private static List<Integer> historyFromString(String value) { // запись id истории в список
+        String[] split = value.split(",");
+        List<Integer> idHistory = new ArrayList<>();
+        for (int i = 0; i < split.length; i++) {
+            idHistory.add(Integer.parseInt(split[i]));
+        }
+        return idHistory;
+    }
+
+    private void save() throws IOException {
+        List<Task> allTask = new ArrayList<>(); // Список со всеми задачами
+        allTask.addAll(getListTask());
+        allTask.addAll(getListEpic());
+        allTask.addAll(getListSubtask());
+        String tableOfContents = "id,type,name,status,description,epic\n"; // Не до конца понимаю куда нужно было вынести переменную, но выносить ее вне метода, мне кажется, не верным решением.
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dir.toFile())); // запись в файл
+        bufferedWriter.write(tableOfContents);
+        for (Task task : allTask) {
+            bufferedWriter.write(taskToString(task));   // записываются все задачи
+        }
+        try {
+            bufferedWriter.write(historyToString(getInMemoryHistoryManager())); // запись истории, если она пустая, то игнорируется
+        } catch (NullPointerException e) {
+            System.out.println("История пуста.");
+        }
+        bufferedWriter.close();
+    }
+
+    private String taskToString(Task task) { // запись задач в строку
+        String id = String.valueOf(task.getIdToEpic());
+        return task.getId() + "," + task.getType() + "," + task.getTitle() + "," + task.getStatus()
+                + "," + task.getDescription() + "," + id + "\n";
     }
 }

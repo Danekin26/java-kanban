@@ -72,8 +72,13 @@ class CustomLinkedList<T> {
                     nextHead.prev.next = nextHead.next;
                     nextHead.next.prev = nextHead.prev;
                 } else if ((nextHead.prev == null) && (nextHead.next == null)) {
-                    nextHead.next.prev = null;
-                    nextHead.prev.next = null;
+                    if (n.equals(nextHead.data)) {
+                        head = null;
+                        tail = null;
+                    } else {
+                        nextHead.next.prev = null;
+                        nextHead.prev.next = null;
+                    }
                 } else if (nextHead.prev == null) {
                     nextHead.next.prev = null;
                     nextHead.data = null;

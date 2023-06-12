@@ -19,33 +19,48 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int createTask(Task task) throws IOException { // Создание задач
-        if (task.getId() == 0) {
-            task.setId(nextId);
+        int id = task.getId();
+        if (id == 0) {
             nextId++;
+            task.setId(nextId);
+            id = nextId;
         }
-        idTask.put(task.getId(), task);
-        return task.getId();
+        if (nextId < id) {
+            nextId = id;
+        }
+        idTask.put(id, task);
+        return id;
     }
 
     @Override
     public int createSubtask(Subtask subtask) throws IOException { // Создание подзадачи
-        if (subtask.getId() == 0) {
-            subtask.setId(nextId);
+        int id = subtask.getId();
+        if (id == 0) {
             nextId++;
+            subtask.setId(nextId);
+            id = nextId;
         }
-        idSubtask.put(subtask.getId(), subtask);
-        return subtask.getId();
+        if (nextId < id) {
+            nextId = id;
+        }
+        idSubtask.put(id, subtask);
+        return id;
     }
 
     @Override
     public int createEpic(Epic epic) throws IOException { // Создание эпика
-        if (epic.getId() == 0) {
-            epic.setId(nextId);
+        int id = epic.getId();
+        if (id == 0) {
             nextId++;
+            epic.setId(nextId);
+            id = nextId;
         }
-        idEpic.put(epic.getId(), epic);
+        idEpic.put(id, epic);
         assigningStatusToEpic(epic);
-        return epic.getId();
+        if (nextId < id) {
+            nextId = id;
+        }
+        return id;
     }
 
     @Override
