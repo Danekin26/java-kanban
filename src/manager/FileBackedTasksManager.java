@@ -11,6 +11,7 @@ import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private Path dir;
+    private String tableOfContents = "id,type,name,status,description,epic\n";
 
     public FileBackedTasksManager(Path dir) {
         this.dir = dir;
@@ -254,7 +255,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         allTask.addAll(getListTask());
         allTask.addAll(getListEpic());
         allTask.addAll(getListSubtask());
-        String tableOfContents = "id,type,name,status,description,epic\n"; // Не до конца понимаю куда нужно было вынести переменную, но выносить ее вне метода, мне кажется, не верным решением.
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dir.toFile())); // запись в файл
         bufferedWriter.write(tableOfContents);
         for (Task task : allTask) {
