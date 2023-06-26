@@ -20,8 +20,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        customLinkedList.removeNode(idNodes.get(id)); // Удаление задачи из истории
-        idNodes.remove(id);
+        if (idNodes.get(id) != null) {
+            customLinkedList.removeNode(idNodes.get(id)); // Удаление задачи из истории
+            idNodes.remove(id);
+        }
     }
 
     @Override
@@ -50,6 +52,9 @@ class CustomLinkedList<T> {
 
     public List<T> getTask() {
         ArrayList<T> historyTasks = new ArrayList<>();
+        if ((head == null) && (tail == null)) {
+            return null;
+        }
         Node<T> lastHead = head;
         T node = head.data;
         for (int i = 0; i < size; i++) {
@@ -62,8 +67,8 @@ class CustomLinkedList<T> {
         return historyTasks;
     }
 
-    public void removeNode(Node node) {
-        List<T> listTasks = new ArrayList<>(getTask());
+    protected void removeNode(Node node) {
+        //List<T> listTasks = new ArrayList<>(getTask());
         Node<T> nextHead = head;
         T n = (T) node.data;
         for (int i = 0; i < size; i++) {
@@ -88,7 +93,7 @@ class CustomLinkedList<T> {
                     nextHead.data = null;
                     tail = nextHead.prev;
                 }
-                listTasks.remove(i);
+                //listTasks.remove(i);
 
                 size--;
                 return;

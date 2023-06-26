@@ -3,13 +3,14 @@ import manager.InMemoryTaskManager;
 import manager.Managers;
 import task.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Scanner;
-
-import static manager.FileBackedTasksManager.loadFromFile;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -69,9 +70,9 @@ public class Main {
                 inMemoryTaskManager.createTask(task1); // id = 7
                 inMemoryTaskManager.createTask(task2); // id = 8
             } else if (numberMenu == 2) {
-                epic12 = new Epic("Экзамен", "сдать экзамен", epic1.getStatus(), epic1.getId(),
-                        epic1.getIdToSubtask());
-                inMemoryTaskManager.updateEpic(epic12);
+                //epic12 = new Epic("Экзамен", "сдать экзамен", epic1.getStatus(), epic1.getId(),
+                //      epic1.getIdToSubtask());
+                //inMemoryTaskManager.updateEpic(epic12);
             } else if (numberMenu == 3) {
 
             } else if (numberMenu == 4) {
@@ -131,6 +132,7 @@ public class Main {
                 inMemoryTaskManager.createEpic(epic2New); // id 5
 
                 inMemoryTaskManager.getEpic(1);
+                inMemoryTaskManager.getEpic(1);
                 inMemoryTaskManager.getSubtask(2);
                 inMemoryTaskManager.getSubtask(3);
                 inMemoryTaskManager.getSubtask(4);
@@ -149,7 +151,7 @@ public class Main {
             } else if (numberMenu == 14) {
                 Path path = Paths.get("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\history.csv");
                 FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(path);
-               // fileBackedTasksManager.createTask(task1);
+                // fileBackedTasksManager.createTask(task1);
                 //fileBackedTasksManager.createEpic(epic1);
                 fileBackedTasksManager.createEpic(epic1);   // id = 1
                 epic1.setType(TaskType.EPIC);
@@ -188,8 +190,42 @@ public class Main {
                 fileBackedTasksManager.deleteById(7);
 
             } else if (numberMenu == 15) {
-                FileBackedTasksManager fileBackedTasksManager2
-                        = loadFromFile(new File("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\history.csv"));
+                Epic epic = new Epic("Epic", "Description");
+                Subtask subtask = new Subtask("Subtask", "Description", TasksStatus.NEW);
+
+                inMemoryTaskManager.createEpic(epic);
+                inMemoryTaskManager.createSubtask(subtask);
+                epic.setIdToSubtask(subtask.getId());
+                subtask.setIdToEpic(epic.getId());
+                Subtask subtaskNew = new Subtask("Subtask Update", "Description Update", TasksStatus.NEW, 2);
+
+                inMemoryTaskManager.updateSubtask(subtaskNew);
+            } else if (numberMenu == 16) {
+                LocalDateTime start = LocalDateTime.of(2023, 6, 26, 12, 0);
+
+                Task task12 = new Task("Task12", "Desc", TasksStatus.NEW, start, 600);
+                inMemoryTaskManager.createTask(task12);
+                LocalDateTime start2 = LocalDateTime.of(2023, 7, 26, 12, 0);
+                Task task2112 = new Task("Task11212", "Desc", TasksStatus.NEW, start2, 700);
+                inMemoryTaskManager.createTask(task2112);
+                LocalDateTime start3 = LocalDateTime.of(2023, 1, 26, 12, 0);
+                Task task11 = new Task("Task11", "Desc", TasksStatus.NEW, start3, 700);
+                inMemoryTaskManager.createTask(task11);
+                Task task11ads = new Task("Task11", "Desc", TasksStatus.NEW);
+                inMemoryTaskManager.createTask(task11ads);
+
+                Task task11adsads = new Task("Task1ads1", "Desc", TasksStatus.NEW);
+                inMemoryTaskManager.createTask(task11adsads);
+
+
+                List<Task> asd= inMemoryTaskManager.getPrioritizedTasks();
+                System.out.println(asd);
+
+            } else if (numberMenu == 17){
+                LocalDateTime num1 = LocalDateTime.of(2022,1,1,10,0);
+                LocalDateTime num2 = LocalDateTime.of(2023,1,1,10,0);
+                Duration duration = Duration.ofHours(4);
+                System.out.println(num1.plus(duration));
             }
         }
     }

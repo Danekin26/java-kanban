@@ -46,4 +46,6 @@ public interface TaskManager {
     List<Task> getListHistory(); // Получить список истории
 
     Task getAnyTask(Integer id); // Получить любую задачу (добавил для того, что бы не засорять историю при вызове методов получения задач по id)
+
+    List<Task> getPrioritizedTasks();
 }
