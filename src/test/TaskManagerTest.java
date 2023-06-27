@@ -297,6 +297,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         manager.createSubtask(subtask2);
 
         epic.setType(TaskType.EPIC);
+        subtask1.setType(TaskType.SUBTASK);
+        subtask2.setType(TaskType.SUBTASK);
         epic.setIdToSubtask(subtask1.getId());
         subtask1.setIdToEpic(epic.getId());
         epic.setIdToSubtask(subtask2.getId());

@@ -1,4 +1,5 @@
 import manager.FileBackedTasksManager;
+import manager.HistoryManager;
 import manager.InMemoryTaskManager;
 import manager.Managers;
 import task.*;
@@ -63,16 +64,20 @@ public class Main {
                 inMemoryTaskManager.createSubtask(subtask21); // id = 5
                 epic2.setIdToSubtask(subtask21.getId());
                 subtask21.setIdToEpic(epic2.getId());
+                subtask21.setType(TaskType.SUBTASK);
                 inMemoryTaskManager.createSubtask(subtask22); // id = 6
                 epic2.setIdToSubtask(subtask22.getId());
                 subtask22.setIdToEpic(epic2.getId());
                 inMemoryTaskManager.updateEpic(epic2);
                 inMemoryTaskManager.createTask(task1); // id = 7
                 inMemoryTaskManager.createTask(task2); // id = 8
+                inMemoryTaskManager.updateTask(task1);
+                inMemoryTaskManager.updateEpic(epic1);
+                inMemoryTaskManager.updateSubtask(subtask11);
+                inMemoryTaskManager.deleteEpic();
             } else if (numberMenu == 2) {
-                //epic12 = new Epic("Экзамен", "сдать экзамен", epic1.getStatus(), epic1.getId(),
-                //      epic1.getIdToSubtask());
-                //inMemoryTaskManager.updateEpic(epic12);
+                InMemoryTaskManager inMemoryTaskManager12 = new InMemoryTaskManager();
+                System.out.println(inMemoryTaskManager12.getListHistory());
             } else if (numberMenu == 3) {
 
             } else if (numberMenu == 4) {
@@ -218,12 +223,12 @@ public class Main {
                 inMemoryTaskManager.createTask(task11adsads);
 
 
-                List<Task> asd= inMemoryTaskManager.getPrioritizedTasks();
+                List<Task> asd = inMemoryTaskManager.getPrioritizedTasks();
                 System.out.println(asd);
 
-            } else if (numberMenu == 17){
-                LocalDateTime num1 = LocalDateTime.of(2022,1,1,10,0);
-                LocalDateTime num2 = LocalDateTime.of(2023,1,1,10,0);
+            } else if (numberMenu == 17) {
+                LocalDateTime num1 = LocalDateTime.of(2022, 1, 1, 10, 0);
+                LocalDateTime num2 = LocalDateTime.of(2023, 1, 1, 10, 0);
                 Duration duration = Duration.ofHours(4);
                 System.out.println(num1.plus(duration));
             }

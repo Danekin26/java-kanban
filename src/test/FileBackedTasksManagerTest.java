@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
     private File file;
+
     @BeforeEach
     void loadFileManager() throws IOException {
         file = new File("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\test\\historyTest.csv");
@@ -37,11 +38,11 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         ArrayList<Integer> idSubtaskForEpic = new ArrayList<>();
         idSubtaskForEpic.add(2);
         Subtask subtask = new Subtask("Subtask1", "Description", TasksStatus.NEW, 2, 1,
-                TaskType.SUBTASK, LocalDateTime.of(2023,6,25,10,30), 600);
+                TaskType.SUBTASK, LocalDateTime.of(2023, 6, 25, 10, 30), 600);
         Epic epic = new Epic("Epic1", "Description", TasksStatus.NEW, 1, idSubtaskForEpic,
-                TaskType.EPIC, LocalDateTime.of(2023,6,25,10,30), 600);
+                TaskType.EPIC, LocalDateTime.of(2023, 6, 25, 10, 30), 600);
         Task task = new Task("Task1", "Description", TasksStatus.NEW, 3, TaskType.TASK,
-                LocalDateTime.of(2023,10,30,10,30), 600);
+                LocalDateTime.of(2023, 10, 30, 10, 30), 600);
         Task task2 = new Task("Task2", "Description", TasksStatus.NEW, 4, TaskType.TASK);
 
         manager.createSubtask(subtask);
@@ -60,6 +61,4 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
         assertEquals(datDownloadFile, datFile, "Данные при загрузке восстановились неверно.");
     }
-
-
 }

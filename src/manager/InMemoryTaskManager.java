@@ -1,10 +1,7 @@
 package manager;
 
 import exceptions.ExcludingCrossing;
-import task.Epic;
-import task.Subtask;
-import task.Task;
-import task.TasksStatus;
+import task.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -110,9 +107,12 @@ public class InMemoryTaskManager implements TaskManager {
         for (Subtask sub : idSubtask.values()) {
             inMemoryHistoryManager.remove(sub.getId());
         }
+        deletingAllTasksOfACertainType(TaskType.EPIC);
+        deletingAllTasksOfACertainType(TaskType.SUBTASK);
         idEpic.clear();
         idSubtask.clear();
     }
+
 
     @Override
     public Task getTask(int id) {  // Получить задачу по id
@@ -149,17 +149,22 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) throws IOException { // Обновить таск
-        if (idTask.get(task.getId()) != null && idTask.get(task.getId()).getId() == task.getId()) {
+        if (idTask.get(task.getId()) != null) {
+            sortedTasks.remove(task);
             idTask.put(task.getId(), task);
+            deletingAnEntryInACollection(task);
+            sortedTasks.add(task);
         }
     }
 
     @Override
     public void updateEpic(Epic epic) throws IOException { // обновить эпик
-        if (idEpic.get(epic.getId()) != null && idEpic.get(epic.getId()).getId() == epic.getId()) {
+        if (idEpic.get(epic.getId()) != null) {
+            deletingAnEntryInACollection(epic);
             epic.setId(epic.getId());
             assigningStatusToEpic(epic);
             idEpic.put(epic.getId(), epic);
+            sortedTasks.add(epic);
         }
     }
 
@@ -172,6 +177,8 @@ public class InMemoryTaskManager implements TaskManager {
                 idSubtask.put(searchSubtask.getId(), subtask);
                 Epic epic = idEpic.get(searchSubtask.getIdToEpic());
                 assigningStatusToEpic(epic);
+                deletingAnEntryInACollection(searchSubtask);
+                sortedTasks.add(searchSubtask);
             }
         }
     }
@@ -211,13 +218,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getListHistory() throws NullPointerException {
-        try {
-            return inMemoryHistoryManager.getHistory();
-        } catch (NullPointerException e) {
-            System.out.println("Список истории: " + e.getMessage());
-        }
-        return null;
+    public List<Task> getListHistory() {
+        return inMemoryHistoryManager.getHistory();
     }
 
     @Override
@@ -263,6 +265,13 @@ public class InMemoryTaskManager implements TaskManager {
         return epic.getStatus();
     }
 
+    private void deletingAnEntryInACollection(Task task) {
+        ArrayList<Task> tasksSorted = new ArrayList<>(sortedTasks);
+        tasksSorted.remove(task);
+        sortedTasks.clear();
+        sortedTasks.addAll(tasksSorted);
+    }
+
     private void addAndCheckingTasksForIntersection(Task task) {
         sortedTasks.add(task);
         if (task.getStartTime() != null) {
@@ -282,15 +291,25 @@ public class InMemoryTaskManager implements TaskManager {
         idEpic.get(idE).deleteIdSubtask(id);
         idSubtask.remove(id);
     }
-}
 
-class TaskStartTimeComparator implements Comparator<Task> {
+    private void deletingAllTasksOfACertainType(TaskType type) {
+        ArrayList<Task> tasksSorted = new ArrayList<>(sortedTasks);
+        sortedTasks.clear();
+        for (Task task : tasksSorted) {
+            if (!task.getType().equals(type)) {
+                sortedTasks.add(task);
+            }
+        }
+    }
 
-    @Override
-    public int compare(Task task1, Task task2) {
-        if ((task1.getStartTime() == null) || (task2.getStartTime() == null)) return 2;
-        if (task1.getStartTime().isBefore(task2.getStartTime())) return -1;
-        if (task1.getStartTime().isAfter(task2.getStartTime())) return 1;
-        else return 0;
+    static class TaskStartTimeComparator implements Comparator<Task> {
+
+        @Override
+        public int compare(Task task1, Task task2) {
+            if ((task1.getStartTime() == null) || (task2.getStartTime() == null)) return 2;
+            if (task1.getStartTime().isBefore(task2.getStartTime())) return -1;
+            if (task1.getStartTime().isAfter(task2.getStartTime())) return 1;
+            else return 0;
+        }
     }
 }

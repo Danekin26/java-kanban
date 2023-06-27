@@ -30,76 +30,75 @@ public class InMemoryHistoryManager implements HistoryManager {
     public List<Task> getHistory() {
         return customLinkedList.getTask();
     }
-}
 
-class CustomLinkedList<T> {
-    public Node<T> head; // Голова
-    public Node<T> tail; // Хвост
-    private int size = 0;
+    class CustomLinkedList<T> {
+        public Node<T> head; // Голова
+        public Node<T> tail; // Хвост
+        private int size = 0;
 
-    public Node<T> linkLast(T t) {
-        final Node<T> oldTail = tail;
-        final Node<T> newNode = new Node<>(oldTail, t, null);
-        tail = newNode;
-        if (oldTail == null) {
-            head = newNode;
-        } else {
-            oldTail.next = newNode;
-        }
-        size++;
-        return newNode;
-    }
-
-    public List<T> getTask() {
-        ArrayList<T> historyTasks = new ArrayList<>();
-        if ((head == null) && (tail == null)) {
-            return null;
-        }
-        Node<T> lastHead = head;
-        T node = head.data;
-        for (int i = 0; i < size; i++) {
-            historyTasks.add(node);
-            lastHead = lastHead.next;
-            if (lastHead != null) {
-                node = lastHead.data;
+        public Node<T> linkLast(T t) {
+            final Node<T> oldTail = tail;
+            final Node<T> newNode = new Node<>(oldTail, t, null);
+            tail = newNode;
+            if (oldTail == null) {
+                head = newNode;
+            } else {
+                oldTail.next = newNode;
             }
+            size++;
+            return newNode;
         }
-        return historyTasks;
-    }
 
-    protected void removeNode(Node node) {
-        //List<T> listTasks = new ArrayList<>(getTask());
-        Node<T> nextHead = head;
-        T n = (T) node.data;
-        for (int i = 0; i < size; i++) {
-            if (nextHead.data.equals(n)) {
-                if ((nextHead.prev != null) && (nextHead.next != null)) {
-                    nextHead.prev.next = nextHead.next;
-                    nextHead.next.prev = nextHead.prev;
-                } else if ((nextHead.prev == null) && (nextHead.next == null)) {
-                    if (n.equals(nextHead.data)) {
-                        head = null;
-                        tail = null;
-                    } else {
-                        nextHead.next.prev = null;
-                        nextHead.prev.next = null;
-                    }
-                } else if (nextHead.prev == null) {
-                    nextHead.next.prev = null;
-                    nextHead.data = null;
-                    head = nextHead.next;
-                } else {
-                    nextHead.prev.next = null;
-                    nextHead.data = null;
-                    tail = nextHead.prev;
+        public List<T> getTask() {
+            ArrayList<T> historyTasks = new ArrayList<>();
+            if ((head == null) && (tail == null)) {
+                return null;
+            }
+            Node<T> lastHead = head;
+            T node = head.data;
+            for (int i = 0; i < size; i++) {
+                historyTasks.add(node);
+                lastHead = lastHead.next;
+                if (lastHead != null) {
+                    node = lastHead.data;
                 }
-                //listTasks.remove(i);
-
-                size--;
-                return;
             }
-            nextHead = nextHead.next;
+            return historyTasks;
+        }
+
+        protected void removeNode(Node node) {
+            Node<T> nextHead = head;
+            T n = (T) node.data;
+            for (int i = 0; i < size; i++) {
+                if (nextHead.data.equals(n)) {
+                    if ((nextHead.prev != null) && (nextHead.next != null)) {
+                        nextHead.prev.next = nextHead.next;
+                        nextHead.next.prev = nextHead.prev;
+                    } else if ((nextHead.prev == null) && (nextHead.next == null)) {
+                        if (n.equals(nextHead.data)) {
+                            head = null;
+                            tail = null;
+                        } else {
+                            nextHead.next.prev = null;
+                            nextHead.prev.next = null;
+                        }
+                    } else if (nextHead.prev == null) {
+                        nextHead.next.prev = null;
+                        nextHead.data = null;
+                        head = nextHead.next;
+                    } else {
+                        nextHead.prev.next = null;
+                        nextHead.data = null;
+                        tail = nextHead.prev;
+                    }
+                    size--;
+                    return;
+                }
+                nextHead = nextHead.next;
+            }
         }
     }
 }
+
+
 
