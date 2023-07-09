@@ -1,15 +1,21 @@
 package task;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Epic extends Task {
     private ArrayList<Integer> idToSubtask = new ArrayList<>();
-    private LocalDateTime endTime;
+    //private LocalDateTime endTime;
 
     public Epic(String title, String description, TasksStatus status, int id, ArrayList<Integer> idToSubtask, TaskType type) {
         super(title, description, status, id);
         this.idToSubtask = idToSubtask;
+        setType(type);
+    }
+
+    public Epic(String title, String description, TasksStatus status, int id, TaskType type) {
+        super(title, description, status, id);
         setType(type);
     }
 
@@ -20,13 +26,14 @@ public class Epic extends Task {
         setType(type);
         this.setStartTime(startTime);
         this.setDuration(duration);
-        this.endTime = this.getStartTime().plusSeconds(this.getDuration());
+        setEndTime(this.getStartTime().plusSeconds(this.getDuration()));
     }
 
     public Epic(Task task) {
         super(task.getTitle(), task.getDescription(), task.getStatus(), task.getId());
         this.setStartTime(task.getStartTime());
         this.setDuration(task.getDuration());
+        this.setEndTime(task.getEndTime());
     }
 
     public Epic(String title, String description) {
@@ -53,21 +60,17 @@ public class Epic extends Task {
         if (getStartTime() == null) {
             setStartTime(subtask.getStartTime());
             setDuration(subtask.getDuration());
-            endTime = getStartTime().plusSeconds(getDuration());
+            setEndTime(getStartTime().plusSeconds(getDuration()));
 
         }
         if (subtask.getStartTime().isBefore(getStartTime())) {
             setStartTime(subtask.getStartTime());
             setDuration(subtask.getDuration() + getDuration());
         }
-        if(endTime.isBefore(subtask.getStartTime().plusSeconds(subtask.getDuration()))){
-            endTime = subtask.getStartTime().plusSeconds(subtask.getDuration());
+        if(getEndTime().isBefore(subtask.getStartTime().plusSeconds(subtask.getDuration()))){
+            setEndTime(subtask.getStartTime().plusSeconds(subtask.getDuration()));
+            setDuration(Duration.between(getStartTime(), getEndTime()).toSeconds());
         }
-    }
-
-    @Override
-    public LocalDateTime getEndTime() {
-        return endTime;
     }
 
     @Override

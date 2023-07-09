@@ -14,7 +14,11 @@ public class Task { // Отдельная задача
     private Integer idToEpic;
     private LocalDateTime startTime;
     private long duration;
+    private LocalDateTime endTime;
 
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
 
     public Task(String title, String description, TasksStatus status) {
         this.title = title;
@@ -28,6 +32,7 @@ public class Task { // Отдельная задача
         this.status = status;
         this.startTime = startTime;
         this.duration = duration;
+        endTime = startTime.plusSeconds(duration);
     }
 
     public Task(String title, String description) {
@@ -59,10 +64,22 @@ public class Task { // Отдельная задача
         this.type = type;
         this.startTime = startTime;
         this.duration = duration;
+        endTime = startTime.plusSeconds(duration);
+    }
+
+    public Task(String title, String description, TasksStatus status,  TaskType type,
+                LocalDateTime startTime, long duration) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.type = type;
+        this.startTime = startTime;
+        this.duration = duration;
+        endTime = startTime.plusSeconds(duration);
     }
 
     public LocalDateTime getEndTime() {
-        return startTime.plusSeconds(duration);
+        return endTime;
     }
 
     public LocalDateTime getStartTime(){

@@ -1,14 +1,11 @@
-import manager.FileBackedTasksManager;
-import manager.HistoryManager;
-import manager.InMemoryTaskManager;
-import manager.Managers;
+import manager.*;
+import manager.server.HttpTaskServer;
+import manager.server.KVServer;
 import task.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
@@ -227,10 +224,10 @@ public class Main {
                 System.out.println(asd);
 
             } else if (numberMenu == 17) {
-                LocalDateTime num1 = LocalDateTime.of(2022, 1, 1, 10, 0);
-                LocalDateTime num2 = LocalDateTime.of(2023, 1, 1, 10, 0);
-                Duration duration = Duration.ofHours(4);
-                System.out.println(num1.plus(duration));
+                KVServer kvServer = new KVServer();
+                kvServer.start();
+                HttpTaskServer httpTaskServer = new HttpTaskServer(new FileBackedTasksManager());
+                httpTaskServer.start();
             }
         }
     }

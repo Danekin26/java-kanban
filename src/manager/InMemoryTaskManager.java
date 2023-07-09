@@ -60,7 +60,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (nextId < id) {
             nextId = id;
         }
-        addAndCheckingTasksForIntersection(epic);
+       // addAndCheckingTasksForIntersection(epic);
         return id;
     }
 
@@ -115,7 +115,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public Task getTask(int id) {  // Получить задачу по id
+    public Task getTask(int id) throws IOException {  // Получить задачу по id
         Task task = idTask.get(id);
         if (task != null) {
             inMemoryHistoryManager.add(task);
@@ -126,7 +126,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic getEpic(int id) {  // Получить эпик по id
+    public Epic getEpic(int id) throws IOException {  // Получить эпик по id
         Epic epic = idEpic.get(id);
         if (epic != null) {
             inMemoryHistoryManager.add(epic);
@@ -137,7 +137,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Subtask getSubtask(int id) {  // Получить подзадачу по id
+    public Subtask getSubtask(int id) throws IOException {  // Получить подзадачу по id
         Subtask subtask = idSubtask.get(id);
         if (subtask != null) {
             inMemoryHistoryManager.add(subtask);
@@ -249,7 +249,7 @@ public class InMemoryTaskManager implements TaskManager {
         int countDone = 0;
         int countInProgress = 0;
         ArrayList<Integer> idToSubtask = epic.getIdToSubtask();
-        if (idToSubtask.size() != 0) {
+        if (idToSubtask != null && idToSubtask.size() !=0) {
             for (Integer integer : idToSubtask) {
                 if (idSubtask.get(integer).getStatus().equals(TasksStatus.NEW)) countNew++;
                 else if (idSubtask.get(integer).getStatus().equals(TasksStatus.DONE)) countDone++;
@@ -300,6 +300,18 @@ public class InMemoryTaskManager implements TaskManager {
                 sortedTasks.add(task);
             }
         }
+    }
+
+    public HashMap<Integer, Task> getIdTask() {
+        return idTask;
+    }
+
+    public HashMap<Integer, Epic> getIdEpic() {
+        return idEpic;
+    }
+
+    public HashMap<Integer, Subtask> getIdSubtask() {
+        return idSubtask;
     }
 
     static class TaskStartTimeComparator implements Comparator<Task> {

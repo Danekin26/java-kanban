@@ -9,43 +9,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
-    int createTask(Task task) throws IOException; // Создание задач
+    int createTask(Task task) throws IOException; // Создание задач     POST   /tasks/task/      *Body
 
-    int createSubtask(Subtask subtask) throws IOException; // Создание подзадачи
+    int createSubtask(Subtask subtask) throws IOException; // Создание подзадачи    POST   /tasks/subtask/      *Body
 
-    int createEpic(Epic epic) throws IOException; // Создание эпика
+    int createEpic(Epic epic) throws IOException; // Создание эпика     POST    /tasks/epic/      *Body
 
-    ArrayList<Task> getListTask(); // Получить список задач
+    ArrayList<Task> getListTask(); // Получить список задач   GET /tasks/task
 
-    ArrayList<Epic> getListEpic(); // Получить список эпиков
+    ArrayList<Epic> getListEpic(); // Получить список эпиков    GET /tasks/epic
 
-    ArrayList<Subtask> getListSubtask(); // Получить список подзадач
+    ArrayList<Subtask> getListSubtask(); // Получить список подзадач    GET /tasks/subtask
 
-    void deleteTask() throws IOException; // Удаление списка задач
+    void deleteTask() throws IOException; // Удаление списка задач    DELETE   /tasks/task/
 
-    void deleteSubtask() throws IOException; // Удаление списка подзадач
+    void deleteSubtask() throws IOException; // Удаление списка подзадач      DELETE   /tasks/subtask/
 
-    void deleteEpic() throws IOException; // Удаление эпиков и их подзадач
+    void deleteEpic() throws IOException; // Удаление эпиков и их подзадач      DELETE /tasks/epic/
 
-    Task getTask(int id);  // Получить задачу по id
+    Task getTask(int id) throws IOException;  // Получить задачу по id   GET /tasks/task/?id=...
 
-    Epic getEpic(int id);  // Получить эпик по id
+    Epic getEpic(int id) throws IOException;  // Получить эпик по id   GET /tasks/epic/?id=...
 
-    Subtask getSubtask(int id);  // Получить подзадачу по id
+    Subtask getSubtask(int id) throws IOException;  // Получить подзадачу по id    GET /tasks/subtask/?id=...
 
-    void updateTask(Task task) throws IOException; // Обновить таск
+    void updateTask(Task task) throws IOException; // Обновить таск     POST  /tasks/task/?id=...      *Body
 
-    void updateEpic(Epic epic) throws IOException; // обновить эпик
+    void updateEpic(Epic epic) throws IOException; // обновить эпик     POST    /tasks/epic/?id=...      *Body
 
-    void updateSubtask(Subtask subtask) throws IOException; // обновить сабтаск
+    void updateSubtask(Subtask subtask) throws IOException; // обновить сабтаск     POST  /tasks/subtask/?id=...      *Body
 
-    void deleteById(int id) throws IOException; // удаление по id
+    void deleteById(int id) throws IOException; // удаление по id      DELETE     /tasks/tasks/?id=...
 
-    ArrayList getListOfTaskInEpic(Epic epic); // Получить список подзадач эпика
+    ArrayList getListOfTaskInEpic(Epic epic); // Получить список подзадач эпика   GET /tasks/epic/subtask/?id=...
 
-    List<Task> getListHistory(); // Получить список истории
+    List<Task> getListHistory(); // Получить список истории   GET /tasks/history/
 
-    Task getAnyTask(Integer id); // Получить любую задачу (добавил для того, что бы не засорять историю при вызове методов получения задач по id)
+    Task getAnyTask(Integer id); // Получить любую задачу    GET /tasks/alltasks/?id=...
 
-    List<Task> getPrioritizedTasks();
+    List<Task> getPrioritizedTasks(); // Получить список отсортированный по приоритету    GET /tasks/
 }

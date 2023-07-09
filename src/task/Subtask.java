@@ -13,6 +13,7 @@ public class Subtask extends Task {
         this.setIdToEpic(idEpic);
         this.setStartTime(task.getStartTime());
         this.setDuration(task.getDuration());
+        this.setEndTime(task.getEndTime());
     }
 
     public Subtask(String title, String description, TasksStatus status, int id) {
@@ -30,12 +31,14 @@ public class Subtask extends Task {
         setType(type);
         this.setStartTime(startTime);
         this.setDuration(duration);
+        setEndTime(startTime.plusSeconds(duration));
     }
 
     public Subtask(String title, String description, TasksStatus status, LocalDateTime startTime, long duration) {
         super(title, description, status);
         this.setStartTime(startTime);
         this.setDuration(duration);
+        setEndTime(startTime.plusSeconds(duration));
     }
 
 }

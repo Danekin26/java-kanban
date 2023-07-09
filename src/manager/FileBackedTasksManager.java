@@ -14,18 +14,22 @@ import java.util.List;
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private Path dir;
     private String tableOfContents = "id,type,name,status,description,epic,time start,time end,duration in sec\n";
+    private HistoryManager historyManager;
 
     public FileBackedTasksManager(Path dir) {
         this.dir = dir;
     }
 
+    public FileBackedTasksManager() {
+        this.dir = Paths.get("./src/history.csv");
+    }
+
     public static void main(String[] args) throws IOException {
         //загрузка из файла
-        //FileBackedTasksManager fileBackedTasksManager2
-          //   = loadFromFile(new File("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\history.csv"));
-        //assigningId(fileBackedTasksManager2);
+        FileBackedTasksManager fileBackedTasksManager2 = loadFromFile(new File("./src/history.csv"));
+        assigningId(fileBackedTasksManager2);
         // Запись в файл
-        Path path = Paths.get("C:\\Users\\Данисимо\\dev\\java-kanban\\src\\history.csv");
+        /*Path path = Paths.get("./src/history.csv");
         FileBackedTasksManager fileBackedTasksManager2 = new FileBackedTasksManager(path);
 
         assigningId(fileBackedTasksManager2);
@@ -66,32 +70,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileBackedTasksManager2.createEpic(epic1);   // id = 1
         epic1.setType(TaskType.EPIC);
         fileBackedTasksManager2.createSubtask(subtask11); // id = 2
-        subtask11.setType(TaskType.SUBTASK);
         epic1.setIdToSubtask(subtask11.getId());
         subtask11.setIdToEpic(epic1.getId());
-        fileBackedTasksManager2.createSubtask(subtask12); //id = 3
         subtask12.setType(TaskType.SUBTASK);
+        fileBackedTasksManager2.createSubtask(subtask12); //id = 3
         epic1.setIdToSubtask(subtask12.getId());
         subtask12.setIdToEpic(epic1.getId());
         fileBackedTasksManager2.updateEpic(epic1);
-        fileBackedTasksManager2.createEpic(epic2); // id = 4
         epic2.setType(TaskType.EPIC);
-        fileBackedTasksManager2.createSubtask(subtask21); // id = 5
+        fileBackedTasksManager2.createEpic(epic2); // id = 4
         subtask21.setType(TaskType.SUBTASK);
+        fileBackedTasksManager2.createSubtask(subtask21); // id = 5
 
         epic2.setIdToSubtask(subtask21.getId());
         subtask21.setIdToEpic(epic2.getId());
-        fileBackedTasksManager2.createSubtask(subtask22); // id = 6
         subtask22.setType(TaskType.SUBTASK);
+        fileBackedTasksManager2.createSubtask(subtask22); // id = 6
 
         epic2.setIdToSubtask(subtask22.getId());
         subtask22.setIdToEpic(epic2.getId());
         fileBackedTasksManager2.updateEpic(epic2);
-        fileBackedTasksManager2.createTask(task1); // id = 7
         task1.setType(TaskType.TASK);
+        fileBackedTasksManager2.createTask(task1); // id = 7
 
-        fileBackedTasksManager2.createTask(task2); // id = 8
         task2.setType(TaskType.TASK);
+        fileBackedTasksManager2.createTask(task2); // id = 8
 
         fileBackedTasksManager2.getTask(7);
         fileBackedTasksManager2.getSubtask(5);
@@ -99,7 +102,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileBackedTasksManager2.getTask(8);
         fileBackedTasksManager2.getSubtask(3);
 
-        fileBackedTasksManager2.deleteById(7);
+        fileBackedTasksManager2.deleteById(7);*/
+        //ArrayList<Task> asd = getListTask();
     }
 
     @Override
@@ -165,6 +169,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
     }
 
+    @Override
+    public List<Task> getListHistory() {
+        return super.getListHistory();
+    }
+
+    @Override
+    public Task getTask(int id) throws IOException {  // Получить задачу по id
+        Task task = super.getTask(id);
+        save();
+        return task;
+    }
+
+    @Override
+    public Epic getEpic(int id) throws IOException {  // Получить эпик по id
+        Epic epic = super.getEpic(id);
+        save();
+        return epic;
+    }
+
+    @Override
+    public Subtask getSubtask(int id) throws IOException {  // Получить подзадачу по id
+        Subtask subtask = super.getSubtask(id);
+        save();
+        return subtask;
+    }
 
     public static Task fromString(String value) { // Восстановление задачи из строки
         String[] split = value.split(",");
@@ -176,6 +205,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         TaskType type = TaskType.valueOf(split[1]);
         task.setType(type);
         task.setStartTime(LocalDateTime.parse(split[6]));
+        task.setEndTime(LocalDateTime.parse(split[7]));
         task.setDuration(Long.parseLong(split[8]));
         if (type.equals(TaskType.SUBTASK)) {
             task.setIdToEpic(Integer.parseInt(split[5]));
@@ -267,7 +297,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return idHistory;
     }
 
-    private void save() throws IOException {
+    public void save() throws IOException {
         List<Task> allTask = new ArrayList<>(); // Список со всеми задачами
         allTask.addAll(getListTask());
         allTask.addAll(getListEpic());
@@ -287,12 +317,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private String taskToString(Task task) { // запись задач в строку
         String id = String.valueOf(task.getIdToEpic());
-        if((task.getDuration() == 0) || (task.getStartTime() == null) || (task.getEndTime() == null)){
+        if ((task.getDuration() == 0) || (task.getStartTime() == null) || (task.getEndTime() == null)) {
             return task.getId() + "," + task.getType() + "," + task.getTitle() + "," + task.getStatus()
                     + "," + task.getDescription() + "," + id + "\n";
         } else {
-        return task.getId() + "," + task.getType() + "," + task.getTitle() + "," + task.getStatus()
-                + "," + task.getDescription() + "," + id + "," + task.getStartTime() + ","
-                + task.getEndTime() + "," + task.getDuration() +"\n";
-    }}
+            return task.getId() + "," + task.getType() + "," + task.getTitle() + "," + task.getStatus()
+                    + "," + task.getDescription() + "," + id + "," + task.getStartTime() + ","
+                    + task.getEndTime() + "," + task.getDuration() + "\n";
+        }
+    }
 }
