@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
+
+    /*
+    * Менеджер, реализующий взаимодействие с задачами*/
     private Integer nextId = 0;
     private HashMap<Integer, Task> idTask = new HashMap<>();
     private HashMap<Integer, Epic> idEpic = new HashMap<>();

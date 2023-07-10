@@ -7,10 +7,14 @@ import task.Epic;
 import task.Subtask;
 import task.Task;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
 public class HttpTaskManager extends FileBackedTasksManager {
+    /*
+    * Менеджер, принимающий вместо файла, URL к серверу KVServer 
+    */
     private final Gson gson = new Gson();
     private final KVTaskClient kvTaskClient;
 
@@ -35,27 +39,32 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public void load(){
         String tasks = kvTaskClient.load("task");
         if(!tasks.isEmpty()) {
-            Map<Integer, Task> taskMap = gson.fromJson(tasks, new TypeToken<Map<Integer, Task>>(){}.getType());
+            Type tasksType = new TypeToken<Map<Integer, Task>>(){}.getType();
+            Map<Integer, Task> taskMap = gson.fromJson(tasks, tasksType);
             getIdTask().putAll(taskMap);
         }
         String epics = kvTaskClient.load("epic");
         if(!epics.isEmpty()){
-            Map<Integer, Epic> epicMap = gson.fromJson(epics, new TypeToken<Map<Integer, Epic>>(){}.getType());
+            Type epicType = new TypeToken<Map<Integer, Epic>>(){}.getType();
+            Map<Integer, Epic> epicMap = gson.fromJson(epics, epicType);
             getIdEpic().putAll(epicMap);
         }
         String subtask = kvTaskClient.load("subtask");
         if(!subtask.isEmpty()) {
-            Map<Integer, Subtask> subtaskMap = gson.fromJson(subtask, new TypeToken<Map<Integer, Subtask>>(){}.getType());
+            Type subtaskType = new TypeToken<Map<Integer, Subtask>>(){}.getType();
+            Map<Integer, Subtask> subtaskMap = gson.fromJson(subtask, subtaskType);
             getIdSubtask().putAll(subtaskMap);
         }
         String history = kvTaskClient.load("history");
         if(!history.equals("null")){
-            List<Task> historyList = gson.fromJson(history, new TypeToken<List<Task>>(){}.getType());
+            Type historyType = new TypeToken<List<Task>>(){}.getType();
+            List<Task> historyList = gson.fromJson(history, historyType);
             getListHistory().addAll(historyList);
         }
         String prior = kvTaskClient.load("prioritized");
         if(!prior.isEmpty()) {
-            List<Task> prioritList = gson.fromJson(prior, new TypeToken<List<Task>>(){}.getType());
+            Type prioriteType = new TypeToken<List<Task>>(){}.getType();
+            List<Task> prioritList = gson.fromJson(prior, prioriteType);
             getPrioritizedTasks().addAll(prioritList);
         }
 

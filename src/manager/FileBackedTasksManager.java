@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
+    /*
+    * Менеджер задач, реализующий взаимодействие с задачами и хранящий состояние в файловом документе*/
     private Path dir;
     private String tableOfContents = "id,type,name,status,description,epic,time start,time end,duration in sec\n";
     private HistoryManager historyManager;
