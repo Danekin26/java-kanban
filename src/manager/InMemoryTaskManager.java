@@ -6,10 +6,11 @@ import task.*;
 import java.io.IOException;
 import java.util.*;
 
+/*
+ * Менеджер, реализующий взаимодействие с задачами
+ */
 public class InMemoryTaskManager implements TaskManager {
 
-    /*
-    * Менеджер, реализующий взаимодействие с задачами*/
     private Integer nextId = 0;
     private HashMap<Integer, Task> idTask = new HashMap<>();
     private HashMap<Integer, Epic> idEpic = new HashMap<>();
@@ -18,6 +19,9 @@ public class InMemoryTaskManager implements TaskManager {
     private TaskStartTimeComparator taskStartTimeComparator = new TaskStartTimeComparator();
     private Set<Task> sortedTasks = new TreeSet<>(taskStartTimeComparator);
 
+    /*
+     * Создание задачи
+     */
     @Override
     public int createTask(Task task) throws IOException { // Создание задач
         int id = task.getId();
@@ -34,6 +38,9 @@ public class InMemoryTaskManager implements TaskManager {
         return id;
     }
 
+    /*
+     * Создание подзадачи
+     */
     @Override
     public int createSubtask(Subtask subtask) throws IOException { // Создание подзадачи
         int id = subtask.getId();
@@ -50,6 +57,9 @@ public class InMemoryTaskManager implements TaskManager {
         return id;
     }
 
+    /*
+     * Создание эпика
+     */
     @Override
     public int createEpic(Epic epic) throws IOException { // Создание эпика
         int id = epic.getId();
@@ -63,36 +73,51 @@ public class InMemoryTaskManager implements TaskManager {
         if (nextId < id) {
             nextId = id;
         }
-       // addAndCheckingTasksForIntersection(epic);
+        // addAndCheckingTasksForIntersection(epic);
         return id;
     }
 
+    /*
+     * Получить список всех задач
+     */
     @Override
     public ArrayList<Task> getListTask() { // Получить список задач
         return new ArrayList<>(idTask.values());
     }
 
+    /*
+     * Получить список всех эпиков
+     */
     @Override
     public ArrayList<Epic> getListEpic() { // Получить список эпиков
         return new ArrayList<>(idEpic.values());
     }
 
+    /*
+     * Получить список всех подзадач
+     */
     @Override
     public ArrayList<Subtask> getListSubtask() { // Получить список подзадач
         return new ArrayList<>(idSubtask.values());
     }
 
+    /*
+     * Удалить все задачи из списка и из истории
+     */
     @Override
-    public void deleteTask() throws IOException { // Удаление списка задач
+    public void deleteTask() throws IOException {
         for (Task task : idTask.values()) {
-            inMemoryHistoryManager.remove(task.getId()); // Удаление из истории
+            inMemoryHistoryManager.remove(task.getId());
         }
         idTask.clear();
     }
 
+    /*
+     * Удалить все подзадачи из списка и из истории
+     */
     @Override
-    public void deleteSubtask() throws IOException { // Удаление списка подзадач
-        for (Epic epic : idEpic.values()) { // Удаление из истории
+    public void deleteSubtask() throws IOException {
+        for (Epic epic : idEpic.values()) {
             for (int i = 0; i < epic.getIdToSubtask().size(); i++) {
                 inMemoryHistoryManager.remove(epic.getIdToSubtask().get(i));
             }
@@ -102,9 +127,12 @@ public class InMemoryTaskManager implements TaskManager {
         idSubtask.clear();
     }
 
+    /*
+     * Удалить все эпики из списка и из истории
+     */
     @Override
-    public void deleteEpic() throws IOException { // Удаление эпиков и их подзадач
-        for (Epic epic : idEpic.values()) { // Удаление из истории
+    public void deleteEpic() throws IOException {
+        for (Epic epic : idEpic.values()) {
             inMemoryHistoryManager.remove(epic.getId());
         }
         for (Subtask sub : idSubtask.values()) {
@@ -115,10 +143,11 @@ public class InMemoryTaskManager implements TaskManager {
         idEpic.clear();
         idSubtask.clear();
     }
-
-
+    /*
+     * Получить задачу по id
+     */
     @Override
-    public Task getTask(int id) throws IOException {  // Получить задачу по id
+    public Task getTask(int id) throws IOException {
         Task task = idTask.get(id);
         if (task != null) {
             inMemoryHistoryManager.add(task);
@@ -127,9 +156,11 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
     }
-
+    /*
+     * Получить эпик по id
+     */
     @Override
-    public Epic getEpic(int id) throws IOException {  // Получить эпик по id
+    public Epic getEpic(int id) throws IOException {
         Epic epic = idEpic.get(id);
         if (epic != null) {
             inMemoryHistoryManager.add(epic);
@@ -138,9 +169,11 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
     }
-
+    /*
+     * Получить подзадачу по id
+     */
     @Override
-    public Subtask getSubtask(int id) throws IOException {  // Получить подзадачу по id
+    public Subtask getSubtask(int id) throws IOException {
         Subtask subtask = idSubtask.get(id);
         if (subtask != null) {
             inMemoryHistoryManager.add(subtask);
@@ -149,9 +182,11 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
     }
-
+    /*
+     * Обновить задачу
+     */
     @Override
-    public void updateTask(Task task) throws IOException { // Обновить таск
+    public void updateTask(Task task) throws IOException { //
         if (idTask.get(task.getId()) != null) {
             sortedTasks.remove(task);
             idTask.put(task.getId(), task);
@@ -159,9 +194,11 @@ public class InMemoryTaskManager implements TaskManager {
             sortedTasks.add(task);
         }
     }
-
+    /*
+     * Обновить эпик
+     */
     @Override
-    public void updateEpic(Epic epic) throws IOException { // обновить эпик
+    public void updateEpic(Epic epic) throws IOException {
         if (idEpic.get(epic.getId()) != null) {
             deletingAnEntryInACollection(epic);
             epic.setId(epic.getId());
@@ -170,9 +207,11 @@ public class InMemoryTaskManager implements TaskManager {
             sortedTasks.add(epic);
         }
     }
-
+    /*
+     * Обновить подзадачу
+     */
     @Override
-    public void updateSubtask(Subtask subtask) throws IOException { // обновить сабтаск
+    public void updateSubtask(Subtask subtask) throws IOException {
         for (Subtask searchSubtask : idSubtask.values()) {
             if (searchSubtask.getId() == subtask.getId()) {
                 subtask.setId(searchSubtask.getId());
@@ -185,33 +224,37 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
     }
-
+    /*
+     * Удаление задачи по id
+     */
     @Override
-    public void deleteById(int id) throws IOException {  // удаление по id
+    public void deleteById(int id) throws IOException {
         if (idTask.containsKey(id)) {
-            inMemoryHistoryManager.remove(idTask.get(id).getId()); // удаление из истории
+            inMemoryHistoryManager.remove(idTask.get(id).getId());
             idTask.remove(id);
         }
         if (idEpic.containsKey(id)) {
-            inMemoryHistoryManager.remove(idEpic.get(id).getId()); // Удаление из истории
+            inMemoryHistoryManager.remove(idEpic.get(id).getId());
             for (int i = 0; i < idEpic.get(id).getIdToSubtask().size(); i++) {
                 idSubtask.remove(idEpic.get(id).getIdToSubtask().get(i));
-                inMemoryHistoryManager.remove(idEpic.get(id).getIdToSubtask().get(i)); // Удаление из истории
+                inMemoryHistoryManager.remove(idEpic.get(id).getIdToSubtask().get(i));
             }
             idEpic.get(id).deleteAllIdToSubtask();
             idEpic.remove(id);
         }
         if (idSubtask.containsKey(id)) {
-            inMemoryHistoryManager.remove(idSubtask.get(id).getId()); // Удаление из истории
+            inMemoryHistoryManager.remove(idSubtask.get(id).getId());
             int idToEpic = idSubtask.get(id).getIdToEpic();
             Epic epic = idEpic.get(idToEpic);
             deleteSubtaskFromEpic(id);
             assigningStatusToEpic(epic);
         }
     }
-
+    /*
+     * Получить список подзадач эпика
+     */
     @Override
-    public ArrayList getListOfTaskInEpic(Epic epic) { // Получить список подзадач эпика
+    public ArrayList getListOfTaskInEpic(Epic epic) { //
         ArrayList<Subtask> subtaskList = new ArrayList<>();
         ArrayList<Integer> idSubtasksInEpic = epic.getIdToSubtask();
         for (Integer integer : idSubtasksInEpic) {
@@ -219,12 +262,16 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return subtaskList;
     }
-
+    /*
+     * Получить список истории
+     */
     @Override
     public List<Task> getListHistory() {
         return inMemoryHistoryManager.getHistory();
     }
-
+    /*
+     * Получить любую задачу по id
+     */
     @Override
     public Task getAnyTask(Integer id) {
         if (idTask.containsKey(id)) {
@@ -237,14 +284,36 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
     }
-
+    /*
+     * Получить список отсортированный по приоритету
+     */
     @Override
     public List<Task> getPrioritizedTasks() {
         return new ArrayList<>(sortedTasks);
     }
-
+    /*
+     * Получить менеджер истории
+     */
     protected HistoryManager getInMemoryHistoryManager() {
         return inMemoryHistoryManager;
+    }
+    /*
+     * Получить маппу задач
+     */
+    public HashMap<Integer, Task> getIdTask() {
+        return idTask;
+    }
+    /*
+     * Получить маппу эпиков
+     */
+    public HashMap<Integer, Epic> getIdEpic() {
+        return idEpic;
+    }
+    /*
+     * Получить маппу подзадач
+     */
+    public HashMap<Integer, Subtask> getIdSubtask() {
+        return idSubtask;
     }
 
     protected TasksStatus assigningStatusToEpic(Epic epic) { // статус эпика
@@ -252,7 +321,7 @@ public class InMemoryTaskManager implements TaskManager {
         int countDone = 0;
         int countInProgress = 0;
         ArrayList<Integer> idToSubtask = epic.getIdToSubtask();
-        if (idToSubtask != null && idToSubtask.size() !=0) {
+        if (idToSubtask != null && idToSubtask.size() != 0) {
             for (Integer integer : idToSubtask) {
                 if (idSubtask.get(integer).getStatus().equals(TasksStatus.NEW)) countNew++;
                 else if (idSubtask.get(integer).getStatus().equals(TasksStatus.DONE)) countDone++;
@@ -303,18 +372,6 @@ public class InMemoryTaskManager implements TaskManager {
                 sortedTasks.add(task);
             }
         }
-    }
-
-    public HashMap<Integer, Task> getIdTask() {
-        return idTask;
-    }
-
-    public HashMap<Integer, Epic> getIdEpic() {
-        return idEpic;
-    }
-
-    public HashMap<Integer, Subtask> getIdSubtask() {
-        return idSubtask;
     }
 
     static class TaskStartTimeComparator implements Comparator<Task> {

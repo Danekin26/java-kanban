@@ -11,9 +11,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Менеджер задач, реализующий взаимодействие с задачами и хранящий состояние в файловом документе
+ */
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    /*
-    * Менеджер задач, реализующий взаимодействие с задачами и хранящий состояние в файловом документе*/
+
     private Path dir;
     private String tableOfContents = "id,type,name,status,description,epic,time start,time end,duration in sec\n";
     private HistoryManager historyManager;
@@ -108,6 +110,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         //ArrayList<Task> asd = getListTask();
     }
 
+    /*
+     * Создание задачи
+     */
     @Override
     public int createTask(Task task) throws IOException {
         super.createTask(task);
@@ -115,6 +120,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return task.getId();
     }
 
+    /*
+     * Создание эпика
+     */
     @Override
     public int createEpic(Epic epic) throws IOException {
         super.createEpic(epic);
@@ -122,6 +130,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return epic.getId();
     }
 
+    /*
+     * Создание подзадачи
+     */
     @Override
     public int createSubtask(Subtask subtask) throws IOException {
         super.createSubtask(subtask);
@@ -129,75 +140,111 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return subtask.getId();
     }
 
+    /*
+     * Удаление задачи
+     */
     @Override
     public void deleteTask() throws IOException {
         super.deleteTask();
         save();
     }
 
+    /*
+     * Удаление подзадачи
+     */
     @Override
     public void deleteSubtask() throws IOException {
         super.deleteSubtask();
         save();
     }
 
+    /*
+     * Удаление эпика с подзадачами
+     */
     @Override
     public void deleteEpic() throws IOException {
         super.deleteEpic();
         save();
     }
 
+    /*
+     * Обновление задачи
+     */
     @Override
     public void updateTask(Task task) throws IOException {
         super.updateTask(task);
         save();
     }
 
+    /*
+     * Обновление эпика
+     */
     @Override
     public void updateEpic(Epic epic) throws IOException {
         super.updateEpic(epic);
         save();
     }
 
+    /*
+     * Обновление подзадачи
+     */
     @Override
     public void updateSubtask(Subtask subtask) throws IOException {
         super.updateSubtask(subtask);
         save();
     }
 
+    /*
+     * Удаление любой задачи по id
+     */
     @Override
     public void deleteById(int id) throws IOException {
         super.deleteById(id);
         save();
     }
 
+    /*
+     * Получить список истории
+     */
     @Override
     public List<Task> getListHistory() {
         return super.getListHistory();
     }
 
+    /*
+     * Получить задачу по id
+     */
     @Override
-    public Task getTask(int id) throws IOException {  // Получить задачу по id
+    public Task getTask(int id) throws IOException {
         Task task = super.getTask(id);
         save();
         return task;
     }
 
+    /*
+     * Получить эпик по id
+     */
     @Override
-    public Epic getEpic(int id) throws IOException {  // Получить эпик по id
+    public Epic getEpic(int id) throws IOException {
         Epic epic = super.getEpic(id);
         save();
         return epic;
     }
 
+    /*
+     * Получить подзадачу по id
+     */
     @Override
-    public Subtask getSubtask(int id) throws IOException {  // Получить подзадачу по id
+    public Subtask getSubtask(int id) throws IOException {
         Subtask subtask = super.getSubtask(id);
         save();
         return subtask;
     }
 
-    public static Task fromString(String value) { // Восстановление задачи из строки
+    /*
+     * Восстановление задачи из строки
+     */
+    public static Task fromString(String value) {
         String[] split = value.split(",");
         split[3] = split[3].toUpperCase();
         TasksStatus status = TasksStatus.valueOf(split[3]);
@@ -215,8 +262,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return task;
     }
 
-
-    public static FileBackedTasksManager loadFromFile(File file) throws IOException { // восстановление всей информации из файла
+    /*
+     * Восстановление всей информации из файла
+     */
+    public static FileBackedTasksManager loadFromFile(File file) throws IOException { //
         String datFile;
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file.toPath());
         try {
@@ -251,6 +300,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return fileBackedTasksManager;
     }
 
+    /*
+     * Сохранение всей информации в файл
+     */
+    public void save() throws IOException {
+        List<Task> allTask = new ArrayList<>(); // Список со всеми задачами
+        allTask.addAll(getListTask());
+        allTask.addAll(getListEpic());
+        allTask.addAll(getListSubtask());
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dir.toFile())); // запись в файл
+        bufferedWriter.write(tableOfContents);
+        for (Task task : allTask) {
+            bufferedWriter.write(taskToString(task));   // записываются все задачи
+        }
+        try {
+            bufferedWriter.write(historyToString(getInMemoryHistoryManager())); // запись истории, если она пустая, то игнорируется
+        } catch (NullPointerException e) {
+            System.out.println("История пуста.");
+        }
+        bufferedWriter.close();
+    }
+
     private static void assigningId(FileBackedTasksManager file) { //присваивание id подзадач в эпик
         ArrayList<Epic> listEpic = file.getListEpic();
         ArrayList<Subtask> subtasks = file.getListSubtask();
@@ -278,7 +348,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         file.save();
     }
 
-    private static String historyToString(HistoryManager manager) {  // запись истории в строку
+    private static String historyToString(HistoryManager manager) {
         StringBuilder build = new StringBuilder();
         build.append("\n");
         for (int i = 0; i < manager.getHistory().size(); i++) {
@@ -290,7 +360,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return build.toString();
     }
 
-    private static List<Integer> historyFromString(String value) { // запись id истории в список
+    private static List<Integer> historyFromString(String value) {
         String[] split = value.split(",");
         List<Integer> idHistory = new ArrayList<>();
         for (int i = 0; i < split.length; i++) {
@@ -299,23 +369,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return idHistory;
     }
 
-    public void save() throws IOException {
-        List<Task> allTask = new ArrayList<>(); // Список со всеми задачами
-        allTask.addAll(getListTask());
-        allTask.addAll(getListEpic());
-        allTask.addAll(getListSubtask());
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dir.toFile())); // запись в файл
-        bufferedWriter.write(tableOfContents);
-        for (Task task : allTask) {
-            bufferedWriter.write(taskToString(task));   // записываются все задачи
-        }
-        try {
-            bufferedWriter.write(historyToString(getInMemoryHistoryManager())); // запись истории, если она пустая, то игнорируется
-        } catch (NullPointerException e) {
-            System.out.println("История пуста.");
-        }
-        bufferedWriter.close();
-    }
 
     private String taskToString(Task task) { // запись задач в строку
         String id = String.valueOf(task.getIdToEpic());
